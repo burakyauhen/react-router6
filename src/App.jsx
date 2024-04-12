@@ -8,11 +8,13 @@ import { Layout } from './components/Layout'
 import { SinglePage } from './pages/SinglePage'
 import { Createpost } from './pages/Createpost'
 import { Editpost } from './pages/Editpost'
+import { RequireAuth } from './hoc/RequireAuth'
+import { LoginPage } from './pages/Loginpage'
+import { AuthProvider } from './hoc/AuthProvider'
 
 function App() {
   return (
-    <>
-     
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Homepage />} />
@@ -20,11 +22,16 @@ function App() {
           <Route path="/posts" element={<Blogpage />} />
           <Route path="posts/:id" element={<SinglePage />} />
           <Route path="posts/:id/edit" element={<Editpost />} />
-          <Route path="posts/new" element={<Createpost />} />
+          <Route path="posts/new" element={
+            <RequireAuth>
+              <Createpost />
+            </RequireAuth>
+          } />
+          <Route path="login" element={<LoginPage />} />
           <Route path="*" element={<Notfoundpage />} />
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   )
 }
 

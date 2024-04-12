@@ -1,9 +1,14 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 const SinglePage = () => {
     const [post, setPost] = useState('');
     const {id} = useParams();
+    const navigate = useNavigate();
+
+    const goBack = () => navigate(-1);
+    const goHome = () => navigate('/', {replace: true});
+
 
     useEffect(() => {
         const getPost = async () => {
@@ -15,6 +20,14 @@ const SinglePage = () => {
     }, [id]);
     return (
         <div>
+            <button onClick={goBack}>Go back</button>
+
+
+            {/* Bad approach */}
+            <button onClick={goHome}>Go home</button>
+
+
+
             {post && (
                 <>
                     <h1>{post.title}</h1>
