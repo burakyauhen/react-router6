@@ -17,8 +17,11 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/about" element={<Aboutpage />} />
+          <Route index element={<Homepage />} />
+          <Route path="/about" element={<Aboutpage />} >
+            <Route path='contact' element={<p>Our contacts</p>} />
+            <Route path='team' element={<p>Our team</p>} />
+          </Route>
           <Route path="/posts" element={<Blogpage />} />
           <Route path="posts/:id" element={<SinglePage />} />
           <Route path="posts/:id/edit" element={<Editpost />} />
