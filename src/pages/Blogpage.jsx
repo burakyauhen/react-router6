@@ -1,48 +1,62 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useSearchParams,
+  useLoaderData,
+  Await,
+} from "react-router-dom";
 import { BlogFilter } from "../components/BlogFilter";
+import { Suspense } from "react";
 
 const Blogpage = () => {
-    const [posts, setPosts] = useState([]);
-    const [searchParams, setSearchParams] = useSearchParams();
+  const { posts } = useLoaderData();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-    const postQuery = searchParams.get('post') || '';
-    const latest = searchParams.has('latest');
+  const postQuery = searchParams.get("post") || "";
+  const latest = searchParams.has("latest");
 
-    const startsFrom = latest ? 80 : 1;
+  const startsFrom = latest ? 80 : 1;
 
-    
+  return (
+    <div>
+      <h1>Our news</h1>
+      <BlogFilter
+        setSearchParams={setSearchParams}
+        postQuery={postQuery}
+        latest={latest}
+      />
+      <Link to="/posts/new">Add new post</Link>
 
-    useEffect(() => {
-        const getPosts = async () => {
-            const response = await fetch(`https://jsonplaceholder.typicode.com/posts`);
-            const data = await response.json();
-            return data;
-        }
-        getPosts().then(data => setPosts(data));
-
-       
-
-    }, []);
-    
-    return (
-        <div>
-            <h1>Our news</h1>
-            <BlogFilter 
-                setSearchParams={setSearchParams}
-                postQuery={postQuery}
-                latest={latest}
-            
-            />
-            <Link to="/posts/new">Add new post</Link>
-            {posts.filter(post => post.title.includes(postQuery) && post.id >= startsFrom
-            ).map(post => (
-                <Link key={post.id} to={`/posts/${post.id}`}>
+      <Suspense fallback={<h2>Loading...</h2>}>
+        <Await resolve={posts}>
+          {(resolvedPosts) => (
+            <>
+              {resolvedPosts
+                .filter(
+                  (post) =>
+                    post.title.includes(postQuery) && post.id >= startsFrom
+                )
+                .map((post) => (
+                  <Link key={post.id} to={`/posts/${post.id}`}>
                     <li>{post.title}</li>
-                </Link>
-            )) }
-        </div>
-    );
-} 
+                  </Link>
+                ))}
+            </>
+          )}
+        </Await>
+      </Suspense>
+    </div>
+  );
+};
 
-export { Blogpage}
+async function getPosts() {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+  return response.json();
+}
+
+const blogLoader = async () => {
+  return ({
+    posts: getPosts(),
+  });
+};
+
+export { Blogpage, blogLoader };
