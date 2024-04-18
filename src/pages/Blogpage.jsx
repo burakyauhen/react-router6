@@ -3,6 +3,7 @@ import {
   useSearchParams,
   useLoaderData,
   Await,
+  json,
 } from "react-router-dom";
 import { BlogFilter } from "../components/BlogFilter";
 import { Suspense } from "react";
@@ -50,12 +51,24 @@ const Blogpage = () => {
 
 async function getPosts() {
   const response = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+
+  // if(!response.ok) {
+  //   throw new Response('', {status: response.status, statusText: 'not Found'});
+  // }
   return response.json();
 }
 
 const blogLoader = async () => {
+
+  const posts = await getPosts();
+ 
+  if (!posts.length) {
+    throw json({message: 'Not found', reason: 'wrong url'}, {status: 404});
+  }
+
+
   return ({
-    posts: getPosts(),
+    posts,
   });
 };
 

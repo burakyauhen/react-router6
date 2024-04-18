@@ -11,11 +11,12 @@ import { Blogpage, blogLoader } from "./pages/Blogpage";
 import { Notfoundpage } from "./pages/Notfoundpage";
 import { Layout } from "./components/Layout";
 import { SinglePage, postLoader } from "./pages/SinglePage";
-import { Createpost } from "./pages/Createpost";
+import { Createpost, createPostAction } from "./pages/Createpost";
 import { Editpost } from "./pages/Editpost";
 import { RequireAuth } from "./hoc/RequireAuth";
 import { LoginPage } from "./pages/Loginpage";
 import { AuthProvider } from "./hoc/AuthProvider";
+import Errorpage from "./pages/Errorpage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,7 +26,7 @@ const router = createBrowserRouter(
         <Route path="contact" element={<p>Our contacts</p>} />
         <Route path="team" element={<p>Our team</p>} />
       </Route>
-      <Route path="/posts" element={<Blogpage />} loader={blogLoader} />
+      <Route path="/posts" element={<Blogpage />} loader={blogLoader} errorElement={<Errorpage />}/>
       <Route path="posts/:id" element={<SinglePage />} loader={postLoader}/>
       <Route path="posts/:id/edit" element={<Editpost />} />
       <Route
@@ -34,7 +35,7 @@ const router = createBrowserRouter(
           <RequireAuth>
             <Createpost />
           </RequireAuth>
-        }
+        } action={createPostAction}
       />
       <Route path="login" element={<LoginPage />} />
       <Route path="*" element={<Notfoundpage />} />
